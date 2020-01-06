@@ -2,8 +2,6 @@ package nmea
 
 import (
     "errors"
-    "math"
-    "strconv"
     "strings"
 )
 
@@ -67,38 +65,12 @@ type VTG struct {
     Checksum                     string
 }
 
-func (g *GGA) GetLatitudeDD() (float32, error) {
-    return ConvertDDMToDD(g.LatitudeDDM, g.LatitudeDirection)
-}
-
-func (g *GGA) GetLongitudeDD() (float32, error) {
-    return ConvertDDMToDD(g.LongitudeDDM, g.LongitudeDirection)
-}
-
 func (g *GGA) GetLatitudeDDM() (string, string, error) {
     return g.LatitudeDDM, g.LatitudeDirection, nil
 }
 
 func (g *GGA) GetLongitudeDDM() (string, string, error) {
     return g.LongitudeDDM, g.LongitudeDirection, nil
-}
-
-// Parse DDM (Degrees Decimal Minutes) to DD (Decimal Degrees)
-func ConvertDDMToDD(value string, direction string) (float32, error) {
-    if value == "" || direction == "" {
-        return 0, errors.New("the location and / or direction value does not exist")
-    }
-
-    lat, _ := strconv.ParseFloat(value, 64)
-    degrees := math.Floor(lat / 100)
-    minutes := ((lat / 100) - math.Floor(lat/100)) * 100 / 60
-    decimal := degrees + minutes
-
-    if direction == "W" || direction == "S" {
-        decimal *= -1
-    }
-
-    return float32(decimal), nil
 }
 
 func ParseGGA(s string) (*GGA, error) {

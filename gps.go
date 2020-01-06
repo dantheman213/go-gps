@@ -3,6 +3,8 @@ package gps
 import (
     "errors"
     "fmt"
+    "github.com/dantheman213/gps/convert"
+    "github.com/dantheman213/gps/internal/common"
     "github.com/dantheman213/gps/nmea"
     "strings"
 )
@@ -16,6 +18,9 @@ const (
     DirectionNorthWest = "NW"
     DirectionSouthEast = "SE"
     DirectionSouthWest = "SW"
+    ProviderGPS = "GPS"
+    ProviderGLONASS = "GLONASS"
+    ProviderGNSS = "GNSS"
 )
 
 // DD (Decimal Degrees)
@@ -44,12 +49,12 @@ func NewGPS() *GPS {
 
 func (g *GPS) GetGPSLocation() (*LocationDD, error) {
     if g.NMEA.GGALocationFixData != nil {
-        lat, err := g.NMEA.GGALocationFixData.GetLatitudeDD()
+        lat, err := convert.ConvertDDMToDD(g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection)
         if err != nil {
             return nil, err
         }
 
-        long, err := g.NMEA.GGALocationFixData.GetLongitudeDD()
+        long, err := convert.ConvertDDMToDD(g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
         if err != nil {
             return nil, err
         }
@@ -63,7 +68,7 @@ func (g *GPS) GetGPSLocation() (*LocationDD, error) {
     return nil, errors.New("no GGA sentence has been ingested to determine location")
 }
 
-func (g *GPS) GetGPSLocationInDD() string {
+func (g *GPS) GetGPSLocationInDDPretty() string {
     loc, err := g.GetGPSLocation()
     if err != nil {
         // TODO
@@ -77,7 +82,7 @@ func (g *GPS) GetGPSLocationInDD() string {
     return str
 }
 
-func (g *GPS) GetGPSLocationInDDM() string {
+func (g *GPS) GetGPSLocationInDDMPretty() string {
     str := ""
     if g.NMEA.GGALocationFixData != nil {
         str = fmt.Sprintf("%s%s, %s%s", g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection, g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
@@ -86,9 +91,28 @@ func (g *GPS) GetGPSLocationInDDM() string {
     return str
 }
 
-func (g *GPS) GetGPSLocationInDMS() string {
+func (g *GPS) GetGPSLocationInDMSPretty() string {
     // TODO
     return "TODO"
+}
+
+func (g *GPS) GetPrimaryProvider() string {
+    list := []int{
+        g.NMEA.GPCount,
+        g.NMEA.GLCount,
+        g.NMEA.GNCount,
+    }
+    _, max := common.MinMax(list)
+    switch max {
+    case g.NMEA.GPCount:
+        return ProviderGPS
+    case g.NMEA.GLCount:
+        return ProviderGLONASS
+    case g.NMEA.GNCount:
+        return ProviderGNSS
+    }
+
+    return ""
 }
 
 func (g *GPS) ingestSatelliteNetworkType(prefix string) {
@@ -156,7 +180,7 @@ func (g *GPS) IngestNMEASentences(sentences string) {
                 // TODO ?
             }
         } else {
-            // invalid NMEA sentence
+            // unsupported or invalid NMEA sentence
             // TODO
         }
     }

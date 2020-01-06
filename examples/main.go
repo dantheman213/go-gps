@@ -6,7 +6,7 @@ import (
 )
 
 // NMEA codes that GPS devices output
-var testNMEACodes = [...]string{
+var testNMEASentences = [...]string{
     "$GPGGA,061004.114,3404.4083,N,11822.5953,W,1,4,1.9,2.0,M,,,,*2C",
     "$GPGSA,A,3,8,11,15,22,,,,,,,,,3.3,1.9,2.2*06",
     "$GPGLL,061004.114,3404.4083,N,11822.5953,W,1,4,1.9,2.0,M,,,,*2C",
@@ -19,14 +19,15 @@ func main() {
     gps := libGPS.NewGPS()
 
     fmt.Println("Ingesting GPS data...")
-    for _, code := range testNMEACodes {
-        gps.IngestNMEASentences(code)
+    for _, sentence := range testNMEASentences {
+        gps.IngestNMEASentences(sentence)
     }
 
     fmt.Print("\nRESULTS:\n")
-    fmt.Printf("GPS Location in Decimal Degrees: %s\n", gps.GetGPSLocationInDD())
-    fmt.Printf("GPS Location in Degrees Decimal Minutes : %s\n", gps.GetGPSLocationInDDM())
-    fmt.Printf("GPS Location in Degrees Minutes Seconds : %s\n", gps.GetGPSLocationInDMS())
+    fmt.Printf("Primary Provider: %s\n", gps.GetPrimaryProvider())
+    fmt.Printf("GPS Location in Decimal Degrees: %s\n", gps.GetGPSLocationInDDPretty())
+    fmt.Printf("GPS Location in Degrees Decimal Minutes : %s\n", gps.GetGPSLocationInDDMPretty())
+    fmt.Printf("GPS Location in Degrees Minutes Seconds : %s\n", gps.GetGPSLocationInDMSPretty())
     fmt.Printf("Speed Over Ground: %s km/h\n", gps.NMEA.VTGCourseAndGroundSpeed.SpeedOverGroundKPH)
     fmt.Printf("HDOP: %s, VDOP: %s\n", gps.NMEA.GSAOverallSatelliteData.HDOP, gps.NMEA.GSAOverallSatelliteData.VDOP)
 
