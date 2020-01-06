@@ -20,9 +20,9 @@ type NMEA struct {
 
 type GGA struct {
     Timestamp          string
-    LatitudeDMS        string
+    LatitudeDDM        string
     LatitudeDirection  string
-    LongitudeDMS       string
+    LongitudeDDM       string
     LongitudeDirection string
     FixQuality         string
     Satellites         string
@@ -68,23 +68,23 @@ type VTG struct {
 }
 
 func (g *GGA) GetLatitudeDD() (float32, error) {
-    return ParseDMSToDD(g.LatitudeDMS, g.LatitudeDirection)
+    return ConvertDDMToDD(g.LatitudeDDM, g.LatitudeDirection)
 }
 
 func (g *GGA) GetLongitudeDD() (float32, error) {
-    return ParseDMSToDD(g.LongitudeDMS, g.LongitudeDirection)
+    return ConvertDDMToDD(g.LongitudeDDM, g.LongitudeDirection)
 }
 
-func (g *GGA) GetLatitudeDMS() (string, string, error) {
-    return g.LatitudeDMS, g.LatitudeDirection, nil
+func (g *GGA) GetLatitudeDDM() (string, string, error) {
+    return g.LatitudeDDM, g.LatitudeDirection, nil
 }
 
-func (g *GGA) GetLongitudeDMS() (string, string, error) {
-    return g.LongitudeDMS, g.LongitudeDirection, nil
+func (g *GGA) GetLongitudeDDM() (string, string, error) {
+    return g.LongitudeDDM, g.LongitudeDirection, nil
 }
 
-// Parse DMS (Degrees Minutes Seconds to Decimal Degrees)
-func ParseDMSToDD(value string, direction string) (float32, error) {
+// Parse DDM (Degrees Decimal Minutes) to DD (Decimal Degrees)
+func ConvertDDMToDD(value string, direction string) (float32, error) {
     if value == "" || direction == "" {
         return 0, errors.New("the location and / or direction value does not exist")
     }
@@ -106,9 +106,9 @@ func ParseGGA(s string) (*GGA, error) {
     if len(tokens) >= 15 {
         return &GGA{
             Timestamp:          tokens[1],
-            LatitudeDMS:        tokens[2],
+            LatitudeDDM:        tokens[2],
             LatitudeDirection:  tokens[3],
-            LongitudeDMS:       tokens[4],
+            LongitudeDDM:       tokens[4],
             LongitudeDirection: tokens[5],
             FixQuality:         tokens[6],
             Satellites:         tokens[7],

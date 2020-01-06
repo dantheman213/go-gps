@@ -18,14 +18,14 @@ const (
     DirectionSouthWest = "SW"
 )
 
-// Decimal Degrees
+// DD (Decimal Degrees)
 type LocationDD struct {
     Latitude  float32
     Longitude float32
 }
 
-// Degrees Minutes Seconds
-type LocationDMS struct {
+// DDM (Degrees Decimal Minutes)
+type LocationDDM struct {
     Latitude           float32
     LatitudeDirection  string
     Longitude          float32
