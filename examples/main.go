@@ -17,12 +17,18 @@ var testNMEACodes = [...]string{
 
 func main() {
     gps := libGPS.NewGPS()
+
+    fmt.Println("Ingesting GPS data...")
     for _, code := range testNMEACodes {
         gps.IngestNMEASentences(code)
     }
 
-    fmt.Printf("GPS Location: %s\n", gps.GetGPSLocationPretty())
+    fmt.Print("\nRESULTS:\n")
+    fmt.Printf("GPS Location in Decimal Degrees: %s\n", gps.GetGPSLocationInDD())
+    fmt.Printf("GPS Location in Degrees Decimal Minutes : %s\n", gps.GetGPSLocationInDDM())
+    fmt.Printf("GPS Location in Degrees Minutes Seconds : %s\n", gps.GetGPSLocationInDMS())
     fmt.Printf("Speed Over Ground: %s km/h\n", gps.NMEA.VTGCourseAndGroundSpeed.SpeedOverGroundKPH)
+    fmt.Printf("HDOP: %s, VDOP: %s\n", gps.NMEA.GSAOverallSatelliteData.HDOP, gps.NMEA.GSAOverallSatelliteData.VDOP)
 
-    fmt.Println("Complete!")
+    fmt.Println("\nComplete!")
 }

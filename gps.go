@@ -63,7 +63,7 @@ func (g *GPS) GetGPSLocation() (*LocationDD, error) {
     return nil, errors.New("no GGA sentence has been ingested to determine location")
 }
 
-func (g *GPS) GetGPSLocationPretty() string {
+func (g *GPS) GetGPSLocationInDD() string {
     loc, err := g.GetGPSLocation()
     if err != nil {
         // TODO
@@ -71,10 +71,24 @@ func (g *GPS) GetGPSLocationPretty() string {
 
     str := ""
     if loc != nil {
-        str = fmt.Sprintf("%f, %f\n", loc.Latitude, loc.Longitude)
+        str = fmt.Sprintf("%f, %f", loc.Latitude, loc.Longitude)
     }
 
     return str
+}
+
+func (g *GPS) GetGPSLocationInDDM() string {
+    str := ""
+    if g.NMEA.GGALocationFixData != nil {
+        str = fmt.Sprintf("%s%s, %s%s", g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection, g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
+    }
+
+    return str
+}
+
+func (g *GPS) GetGPSLocationInDMS() string {
+    // TODO
+    return "TODO"
 }
 
 func (g *GPS) ingestSatelliteNetworkType(prefix string) {
@@ -100,6 +114,7 @@ func (g *GPS) IngestNMEASentences(sentences string) {
     for _, item := range items {
         if nmea.IsValidNMEASentence(item) {
             g.ingestSatelliteNetworkType(item[1:3])
+
             nmeaCode := item[3:strings.Index(item, ",")]
             switch nmeaCode {
             case "GGA":
