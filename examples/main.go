@@ -5,7 +5,8 @@ import (
     libGPS "github.com/dantheman213/gps"
 )
 
-var testCodes = [...]string{
+// NMEA codes that GPS devices output
+var testNMEACodes = [...]string{
     "$GPGGA,061004.114,3404.4083,N,11822.5953,W,1,4,1.9,2.0,M,,,,*2C",
     "$GPGSA,A,3,8,11,15,22,,,,,,,,,3.3,1.9,2.2*06",
     "$GPGLL,061004.114,3404.4083,N,11822.5953,W,1,4,1.9,2.0,M,,,,*2C",
@@ -16,7 +17,7 @@ var testCodes = [...]string{
 
 func main() {
     gps := libGPS.NewGPS()
-    for _, code := range testCodes {
+    for _, code := range testNMEACodes {
         gps.IngestNMEASentences(code)
     }
 

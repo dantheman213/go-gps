@@ -8,9 +8,9 @@ import (
 )
 
 type NMEA struct {
-    GPCount int // GPS
-    GLCount int // GLONASS
-    GNCount int // GNSS
+    GPCount                  int // GPS
+    GLCount                  int // GLONASS
+    GNCount                  int // GNSS
     GGALocationFixData       *GGA
     RMCRecMinData            *RMC
     GSAOverallSatelliteData  *GSA
@@ -112,7 +112,7 @@ func ParseGGA(s string) (*GGA, error) {
             LongitudeDirection: tokens[5],
             FixQuality:         tokens[6],
             Satellites:         tokens[7],
-            Checksum:           tokens[14][strings.Index(tokens[14], "*")+1:len(tokens[14])],
+            Checksum:           tokens[14][strings.Index(tokens[14], "*")+1 : len(tokens[14])],
         }, nil
     }
 
@@ -128,7 +128,7 @@ func ParseRMC(s string) (*RMC, error) {
             TrackAngleInDegrees:    tokens[8],
             Date:                   tokens[9],
             MagneticVariation:      tokens[10],
-            Checksum:               tokens[12][strings.Index(tokens[12], "*")+1:len(tokens[12])],
+            Checksum:               tokens[12][strings.Index(tokens[12], "*")+1 : len(tokens[12])],
         }, nil
     }
 
@@ -145,7 +145,7 @@ func ParseGSA(s string) (*GSA, error) {
             PDOP:     tokens[15],
             HDOP:     tokens[16],
             VDOP:     tokens[17][0:i],
-            Checksum: tokens[17][i+1:len(tokens[17])],
+            Checksum: tokens[17][i+1 : len(tokens[17])],
         }, nil
     }
 
@@ -179,7 +179,7 @@ func ParseVTG(s string) (*VTG, error) {
             TrackMadeGoodDegreesMagnetic: tokens[3],
             SpeedInKnots:                 tokens[5],
             SpeedOverGroundKPH:           tokens[7],
-            Checksum:                     tokens[9][strings.Index(tokens[9], "*")+1:len(tokens[9])],
+            Checksum:                     tokens[9][strings.Index(tokens[9], "*")+1 : len(tokens[9])],
         }, nil
     }
 
