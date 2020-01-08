@@ -1,4 +1,4 @@
-package common
+package math
 
 func MinMax(array []int) (int, int) {
     var max int = array[0]

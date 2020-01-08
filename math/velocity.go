@@ -1,4 +1,4 @@
-package convert
+package math
 
 // Kilometers per hour to miles per Hour
 func KPHToMPH(kph float64) float64 {

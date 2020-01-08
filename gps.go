@@ -3,9 +3,10 @@ package gps
 import (
     "errors"
     "fmt"
-    "github.com/dantheman213/gps/convert"
-    "github.com/dantheman213/gps/internal/common"
+    "github.com/dantheman213/gps/location"
+    "github.com/dantheman213/gps/math"
     "github.com/dantheman213/gps/nmea"
+    "strconv"
     "strings"
 )
 
@@ -23,22 +24,9 @@ const (
     ProviderGNSS = "GNSS"
 )
 
-// DD (Decimal Degrees)
-type LocationDD struct {
-    Latitude  float64
-    Longitude float64
-}
-
-// DDM (Degrees Decimal Minutes)
-type LocationDDM struct {
-    Latitude           float64
-    LatitudeDirection  string
-    Longitude          float64
-    LongitudeDirection string
-}
-
 type GPS struct {
     NMEA *nmea.NMEA
+    originalLocation *location.LocationDD
 }
 
 func NewGPS() *GPS {
@@ -47,19 +35,50 @@ func NewGPS() *GPS {
     return r
 }
 
-func (g *GPS) GetGPSLocation() (*LocationDD, error) {
+// Get distance traveled in Kilometers
+func (g *GPS) GetDistanceTraveledInKM() (float64, error) {
+    c1, err1 := g.GetOriginalGPSLocation()
+    if err1 != nil {
+        return 0, err1
+    }
+
+    c2, err2 := g.GetGPSLocation()
+    if err2 != nil {
+        return 0, err2
+    }
+
+    return math.CalculateDistanceBetweenPointsInKM(c1, c2), nil
+}
+
+func (g *GPS) GetOriginalGPSLocation() (*location.LocationDD, error) {
+    if g.originalLocation == nil {
+        return nil, errors.New("location has not been recorded")
+    }
+
+    return g.originalLocation, nil
+}
+
+func (g *GPS) GetGPSLocation() (*location.LocationDD, error) {
     if g.NMEA.GGALocationFixData != nil {
-        lat, err := convert.DDMToDD(g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection)
+        f1, err := strconv.ParseFloat(g.NMEA.GGALocationFixData.LatitudeDDM, 64)
+        if err != nil {
+            return nil, err
+        }
+        lat, err := math.DDMToDD(f1, g.NMEA.GGALocationFixData.LatitudeDirection)
         if err != nil {
             return nil, err
         }
 
-        long, err := convert.DDMToDD(g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
+        f2, err := strconv.ParseFloat(g.NMEA.GGALocationFixData.LongitudeDDM, 64)
+        if err != nil {
+            return nil, err
+        }
+        long, err := math.DDMToDD(f2, g.NMEA.GGALocationFixData.LongitudeDirection)
         if err != nil {
             return nil, err
         }
 
-        return &LocationDD{
+        return &location.LocationDD{
             Latitude:  lat,
             Longitude: long,
         }, nil
@@ -102,7 +121,7 @@ func (g *GPS) GetPrimaryProvider() string {
         g.NMEA.GLCount,
         g.NMEA.GNCount,
     }
-    _, max := common.MinMax(list)
+    _, max := math.MinMax(list)
     switch max {
     case g.NMEA.GPCount:
         return ProviderGPS
@@ -148,6 +167,13 @@ func (g *GPS) IngestNMEASentences(sentences string) {
                     return
                 }
                 g.NMEA.GGALocationFixData = d
+                if g.originalLocation == nil {
+                    g.originalLocation, err = g.GetGPSLocation()
+                    if err != nil {
+                        // TODO
+                        return
+                    }
+                }
                 break
             case "RMC":
                 d, err := nmea.ParseRMC(item)
