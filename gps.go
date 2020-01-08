@@ -25,15 +25,15 @@ const (
 
 // DD (Decimal Degrees)
 type LocationDD struct {
-    Latitude  float32
-    Longitude float32
+    Latitude  float64
+    Longitude float64
 }
 
 // DDM (Degrees Decimal Minutes)
 type LocationDDM struct {
-    Latitude           float32
+    Latitude           float64
     LatitudeDirection  string
-    Longitude          float32
+    Longitude          float64
     LongitudeDirection string
 }
 
@@ -49,12 +49,12 @@ func NewGPS() *GPS {
 
 func (g *GPS) GetGPSLocation() (*LocationDD, error) {
     if g.NMEA.GGALocationFixData != nil {
-        lat, err := convert.ConvertDDMToDD(g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection)
+        lat, err := convert.DDMToDD(g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection)
         if err != nil {
             return nil, err
         }
 
-        long, err := convert.ConvertDDMToDD(g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
+        long, err := convert.DDMToDD(g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
         if err != nil {
             return nil, err
         }
