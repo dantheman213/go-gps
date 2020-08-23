@@ -3,9 +3,9 @@ package gps
 import (
     "errors"
     "fmt"
-    "github.com/dantheman213/gps/location"
-    "github.com/dantheman213/gps/math"
-    "github.com/dantheman213/gps/nmea"
+    "github.com/dantheman213/go-gps/location"
+    "github.com/dantheman213/go-gps/math"
+    "github.com/dantheman213/go-gps/nmea"
     "strconv"
     "strings"
 )
@@ -19,24 +19,24 @@ const (
     DirectionNorthWest = "NW"
     DirectionSouthEast = "SE"
     DirectionSouthWest = "SW"
-    ProviderGPS = "GPS"
+    ProviderGPS = "GPSEngine"
     ProviderGLONASS = "GLONASS"
     ProviderGNSS = "GNSS"
 )
 
-type GPS struct {
+type GPSEngine struct {
     NMEA *nmea.NMEA
     originalLocation *location.LocationDD
 }
 
-func NewGPS() *GPS {
-    r := &GPS{}
+func NewGPS() *GPSEngine {
+    r := &GPSEngine{}
     r.NMEA = &nmea.NMEA{}
     return r
 }
 
 // Get distance traveled in Kilometers
-func (g *GPS) GetDistanceTraveledInKM() (float64, error) {
+func (g *GPSEngine) GetDistanceTraveledInKM() (float64, error) {
     c1, err1 := g.GetOriginalGPSLocation()
     if err1 != nil {
         return 0, err1
@@ -50,7 +50,7 @@ func (g *GPS) GetDistanceTraveledInKM() (float64, error) {
     return math.CalculateDistanceBetweenPointsInKM(c1, c2), nil
 }
 
-func (g *GPS) GetOriginalGPSLocation() (*location.LocationDD, error) {
+func (g *GPSEngine) GetOriginalGPSLocation() (*location.LocationDD, error) {
     if g.originalLocation == nil {
         return nil, errors.New("location has not been recorded")
     }
@@ -58,7 +58,7 @@ func (g *GPS) GetOriginalGPSLocation() (*location.LocationDD, error) {
     return g.originalLocation, nil
 }
 
-func (g *GPS) GetGPSLocation() (*location.LocationDD, error) {
+func (g *GPSEngine) GetGPSLocation() (*location.LocationDD, error) {
     if g.NMEA.GGALocationFixData != nil {
         f1, err := strconv.ParseFloat(g.NMEA.GGALocationFixData.LatitudeDDM, 64)
         if err != nil {
@@ -87,7 +87,7 @@ func (g *GPS) GetGPSLocation() (*location.LocationDD, error) {
     return nil, errors.New("no GGA sentence has been ingested to determine location")
 }
 
-func (g *GPS) GetGPSLocationInDDPretty() string {
+func (g *GPSEngine) GetGPSLocationInDDPretty() string {
     loc, err := g.GetGPSLocation()
     if err != nil {
         // TODO
@@ -101,7 +101,7 @@ func (g *GPS) GetGPSLocationInDDPretty() string {
     return str
 }
 
-func (g *GPS) GetGPSLocationInDDMPretty() string {
+func (g *GPSEngine) GetGPSLocationInDDMPretty() string {
     str := ""
     if g.NMEA.GGALocationFixData != nil {
         str = fmt.Sprintf("%s%s, %s%s", g.NMEA.GGALocationFixData.LatitudeDDM, g.NMEA.GGALocationFixData.LatitudeDirection, g.NMEA.GGALocationFixData.LongitudeDDM, g.NMEA.GGALocationFixData.LongitudeDirection)
@@ -110,12 +110,12 @@ func (g *GPS) GetGPSLocationInDDMPretty() string {
     return str
 }
 
-func (g *GPS) GetGPSLocationInDMSPretty() string {
+func (g *GPSEngine) GetGPSLocationInDMSPretty() string {
     // TODO
     return "TODO"
 }
 
-func (g *GPS) GetPrimaryProvider() string {
+func (g *GPSEngine) GetPrimaryProvider() string {
     list := []int{
         g.NMEA.GPCount,
         g.NMEA.GLCount,
@@ -134,7 +134,7 @@ func (g *GPS) GetPrimaryProvider() string {
     return ""
 }
 
-func (g *GPS) ingestSatelliteNetworkType(prefix string) {
+func (g *GPSEngine) ingestSatelliteNetworkType(prefix string) {
     switch prefix {
     case "GP":
         g.NMEA.GPCount = g.NMEA.GPCount + 1
@@ -150,7 +150,7 @@ func (g *GPS) ingestSatelliteNetworkType(prefix string) {
     }
 }
 
-func (g *GPS) IngestNMEASentences(sentences string) {
+func (g *GPSEngine) IngestNMEASentences(sentences string) {
     s := strings.ReplaceAll(sentences, "\r", "")
     items := strings.Split(s, "\n")
 

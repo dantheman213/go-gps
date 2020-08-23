@@ -4,7 +4,7 @@ package math
 // https://www.math.ksu.edu/~dbski/writings/haversine.pdf
 
 import (
-    "github.com/dantheman213/gps/location"
+    "github.com/dantheman213/go-gps/location"
     "math"
 )
 

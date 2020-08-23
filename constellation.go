@@ -8,11 +8,11 @@ const (
 )
 
 // TODO
-func (g *GPS) GetSatelliteSignalStrength() (int, error) {
+func (g *GPSEngine) GetSatelliteSignalStrength() (int, error) {
     return SignalStrengthExcellent, nil
 }
 
 // TODO
-func (g *GPS) GetSatelliteCount() int {
+func (g *GPSEngine) GetSatelliteCount() int {
     return 0
 }

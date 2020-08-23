@@ -2,8 +2,8 @@ package main
 
 import (
     "fmt"
-    libGPS "github.com/dantheman213/gps"
-    "github.com/dantheman213/gps/serial"
+    libGPS "github.com/dantheman213/go-gps"
+    "github.com/dantheman213/go-gps/serial"
     "log"
     "strings"
 )

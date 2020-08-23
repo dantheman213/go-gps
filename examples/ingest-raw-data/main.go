@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    libGPS "github.com/dantheman213/gps"
+    libGPS "github.com/dantheman213/go-gps"
 )
 
 // NMEA codes that GPS devices output
