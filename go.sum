@@ -1,3 +1,7 @@
+github.com/dantheman213/go-serial v0.0.0-20200823160259-7d528976de19 h1:Z2ecusO6d5J4YrqGNAC28Ja9CWJxUEJCh+nVs1GxQ84=
+github.com/dantheman213/go-serial v0.0.0-20200823160259-7d528976de19/go.mod h1:0eCIOVZ0ogfkwUpPN1co0Ei6LjsFcfQZ7BdTXF+iVrA=
+github.com/dantheman213/gps v0.0.0-20200823155418-e674bcacd189 h1:/Meo54SEQ3cts1B0nwceGHzjxP9wkwJ8GkREQ1L5Mzk=
+github.com/dantheman213/gps v0.0.0-20200823155418-e674bcacd189/go.mod h1:ldSylNtDo0i8gW40t6S8CkNpPsfwFpY3/UJcdlTWWyo=
 github.com/dantheman213/serial v0.0.0-20200107023037-dad1e3436910 h1:XlvmUjraegSDXp+IdnLpxVdXb7HELGepkTh/0/d/VPo=
 github.com/dantheman213/serial v0.0.0-20200107023037-dad1e3436910/go.mod h1:XnVOGoan4d0ECMcpma22etOZN7UL0HsMCr050Hz0DZA=
 github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07 h1:UyzmZLoiDWMRywV4DUYb9Fbt8uiOSooupjTq10vpvnU=

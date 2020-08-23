@@ -2,8 +2,8 @@ package serial
 
 import (
     "errors"
+    libDSerial "github.com/dantheman213/go-serial"
     "github.com/dantheman213/gps/nmea"
-    libDSerial "github.com/dantheman213/serial"
     "log"
 )
 
